@@ -12,7 +12,6 @@ public class ClientThread extends Thread {
 
     public ClientThread(Socket socket) {
         this.socket = socket;
-        this.delegator = new TestServiceDelegator();
     }
 
     @Override
