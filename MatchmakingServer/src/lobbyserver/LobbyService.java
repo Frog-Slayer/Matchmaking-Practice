@@ -2,10 +2,7 @@ package lobbyserver;
 
 import server.ServiceDelegator;
 
-public class LobbyService implements ServiceDelegator {
-
-    @Override
-    public String process(String message) {
-        return "";
-    }
+public interface LobbyService extends ServiceDelegator {
+    String login(String username, String password);
+    String match(String token);
 }
