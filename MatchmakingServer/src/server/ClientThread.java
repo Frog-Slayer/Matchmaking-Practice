@@ -12,6 +12,12 @@ public class ClientThread extends Thread {
 
     public ClientThread(Socket socket) {
         this.socket = socket;
+        this.delegator = DefaultServiceDelegator.getInstance();
+    }
+
+    public ClientThread(Socket socket, ServiceDelegator delegator) {
+        this.socket = socket;
+        this.delegator = delegator;
     }
 
     @Override
