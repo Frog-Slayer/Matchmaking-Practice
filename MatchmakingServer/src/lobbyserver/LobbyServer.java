@@ -8,6 +8,11 @@ public class LobbyServer extends Server {
         super(port, new LobbyServiceImpl());
     }
 
+    @Override
+    public void run() {
+        super.run();
+    }
+
     public static void main(String[] args) {
         new LobbyServer(12000).run();
     }
