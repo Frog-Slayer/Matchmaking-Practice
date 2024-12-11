@@ -5,7 +5,7 @@ import server.Server;
 public class LobbyServer extends Server {
 
     public LobbyServer(int port) {
-        super(port, new LobbyServiceImpl());
+        super(port, new LobbyServiceImpl(), LobbyClientThread.class);
     }
 
     @Override

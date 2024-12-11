@@ -3,7 +3,6 @@ package lobbyserver;
 import server.ClientThread;
 import utils.Message;
 import utils.SimpleUserDB;
-import utils.User;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,10 +35,7 @@ public class LobbyServiceImpl implements LobbyService{
 
     @Override
     public String match(String token) {
-        for (User user : loginUsers.values()) {
 
-
-        }
 
 
         return "[Match]";

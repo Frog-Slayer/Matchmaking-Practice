@@ -6,15 +6,24 @@ import java.net.Socket;
 public class Server {
     private final int port;
     private final ServiceDelegator delegator;
+    private final Class<? extends ClientThread> threadClass;
 
     public Server(int port) {
         this.port = port;
         this.delegator = DefaultServiceDelegator.getInstance();
+        this.threadClass = ClientThread.class;
     }
 
     public Server(int port, ServiceDelegator delegator) {
         this.port = port;
         this.delegator = delegator;
+        this.threadClass = ClientThread.class;
+    }
+
+    public Server(int port, ServiceDelegator delegator, Class<? extends ClientThread> threadClass) {
+        this.port = port;
+        this.delegator = delegator;
+        this.threadClass = threadClass;
     }
 
     public void run() {
