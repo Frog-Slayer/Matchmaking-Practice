@@ -1,6 +1,5 @@
 package lobbyserver;
 
-import server.ClientThread;
 import utils.Message;
 import utils.SimpleUserDB;
 import utils.User;
@@ -15,8 +14,9 @@ public class LobbyServiceImpl implements LobbyService{
 
     private static final int MATCH_NEEDED = 5;
 
-    private Map<String, LobbyClientThread> loginUsers = new ConcurrentHashMap<>();
-    private SimpleUserDB userDB = SimpleUserDB.getInstance();
+    private final Map<String, LobbyClientThread> clientThreads = new ConcurrentHashMap<>();
+    private final Map<String, User>  loginUsers= new ConcurrentHashMap<>();
+    private final SimpleUserDB userDB = SimpleUserDB.getInstance();
 
     @Override
     public String process(String message) {
@@ -39,10 +39,7 @@ public class LobbyServiceImpl implements LobbyService{
         User user = userDB.findUserByUsernameAndPassword(username, password);
         if (user != null) {
             String token = UUID.randomUUID().toString();
-            if (Thread.currentThread() instanceof LobbyClientThread thread) {
-                thread.setUser(user);
-                loginUsers.put(token, thread);
-            }
+            loginUsers.put(token, user);
             return token;
         }
 
@@ -51,22 +48,20 @@ public class LobbyServiceImpl implements LobbyService{
 
     @Override
     public String match(String token) {
-        User currentUser = loginUsers.get(token).getUser();
+        User currentUser = loginUsers.get(token);
         currentUser.setMatching(true);
 
-        for (LobbyClientThread thread: loginUsers.values()) {
-            List<LobbyClientThread> matched = new ArrayList<>();
+        List<User> matched = new ArrayList<>();
 
-            if (isSimilar(currentUser.getElo(), thread.getUser().getElo())) {
-                matched.add(thread);
-            }
+        for (User user: loginUsers.values()) {
+            if (user.isMatching() && isSimilar(currentUser.getElo(), user.getElo())) matched.add(user);
 
             if (matched.size() == MATCH_NEEDED) {
                 return "MATCH_COMPLETE";
             }
         }
 
-        return "MATCH_FAILED";
+        return "NOW MATCHING";
     }
 
     private boolean isSimilar(int elo1, int elo2) {

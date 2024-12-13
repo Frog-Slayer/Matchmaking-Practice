@@ -10,25 +10,50 @@ public class Client {
 
     public static String serverHost = "localhost";
     public static Integer serverPort = 12000;
+    private String token;
 
     public void run() {
-        try (Socket socket = new Socket(InetAddress.getByName(serverHost), serverPort); BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+        try (Socket socket = new Socket(InetAddress.getByName(serverHost), serverPort);
+             BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
+             PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             while (true) {
-                String input = br.readLine();
-
-                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-                writer.println(input);
-                writer.flush();
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                String output = reader.readLine();
-
-                System.out.println(output);
+                String input = inputReader.readLine();
+                if (input.equals("login")) login(inputReader, socketWriter, socketReader);
+                else if (input.equals("match")) match(inputReader, socketWriter, socketReader);
             }
         }
         catch (Exception e){
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void login(BufferedReader br, PrintWriter sockWriter, BufferedReader sockReader) {
+        try {
+                String[] input = br.readLine().split(" ");
+                String username = input[0];
+                String password = input[1];
+
+                sockWriter.println("type login username " + username + " password " + password);
+                sockWriter.flush();
+
+                token = sockReader.readLine();
+                System.out.println("[Login Success]" + token);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void match(BufferedReader br, PrintWriter sockWriter, BufferedReader sockReader) {
+        try {
+            if (token != null) {
+                sockWriter.println("type match token " + token);
+                sockWriter.flush();
+                System.out.println("[match]" + sockReader.readLine());
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 

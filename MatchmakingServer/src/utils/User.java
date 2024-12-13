@@ -36,4 +36,7 @@ public class User {
         isMatching = matching;
     }
 
+    public boolean isMatching() {
+        return isMatching;
+    }
 }
