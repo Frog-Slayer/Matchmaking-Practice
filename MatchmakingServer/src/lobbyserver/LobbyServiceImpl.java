@@ -3,13 +3,19 @@ package lobbyserver;
 import server.ClientThread;
 import utils.Message;
 import utils.SimpleUserDB;
+import utils.User;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LobbyServiceImpl implements LobbyService{
 
-    private Map<String, ClientThread> loginUsers = new ConcurrentHashMap<>();
+    private static final int MATCH_NEEDED = 5;
+
+    private Map<String, LobbyClientThread> loginUsers = new ConcurrentHashMap<>();
     private SimpleUserDB userDB = SimpleUserDB.getInstance();
 
     @Override
@@ -30,15 +36,41 @@ public class LobbyServiceImpl implements LobbyService{
 
     @Override
     public String login(String username, String password) {
-        return "[Login]";
+        User user = userDB.findUserByUsernameAndPassword(username, password);
+        if (user != null) {
+            String token = UUID.randomUUID().toString();
+            if (Thread.currentThread() instanceof LobbyClientThread thread) {
+                thread.setUser(user);
+                loginUsers.put(token, thread);
+            }
+            return token;
+        }
+
+        return "FAIL";
     }
 
     @Override
     public String match(String token) {
+        User currentUser = loginUsers.get(token).getUser();
+        currentUser.setMatching(true);
 
+        for (LobbyClientThread thread: loginUsers.values()) {
+            List<LobbyClientThread> matched = new ArrayList<>();
 
+            if (isSimilar(currentUser.getElo(), thread.getUser().getElo())) {
+                matched.add(thread);
+            }
 
-        return "[Match]";
+            if (matched.size() == MATCH_NEEDED) {
+                return "MATCH_COMPLETE";
+            }
+        }
+
+        return "MATCH_FAILED";
+    }
+
+    private boolean isSimilar(int elo1, int elo2) {
+        return Math.abs(elo1 - elo2) < 50;
     }
 
 }

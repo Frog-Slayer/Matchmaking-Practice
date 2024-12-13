@@ -9,6 +9,9 @@ public class SimpleUserDB {
 
     private SimpleUserDB() {
         users = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            users.add(new User("User" + i, "password" + i));
+        }
     }
 
     public static SimpleUserDB getInstance() {
