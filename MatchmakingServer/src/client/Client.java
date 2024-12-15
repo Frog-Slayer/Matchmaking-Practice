@@ -1,5 +1,7 @@
 package client;
 
+import client.dto.LoginMessage;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -35,7 +37,7 @@ public class Client {
                 String username = input[0];
                 String password = input[1];
 
-                sockWriter.println("type login username " + username + " password " + password);
+                sockWriter.println(new LoginMessage(username, password));
                 sockWriter.flush();
 
                 token = sockReader.readLine();

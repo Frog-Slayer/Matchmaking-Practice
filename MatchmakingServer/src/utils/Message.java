@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Message {
-    private Map<String, String> map = new HashMap<>();
+    private final Map<String, String> map = new HashMap<>();
 
+    //TODO : 파싱 실패 예외 처리 필요
     public Message(String message) {
         String[] messageParts = message.split(" ");
         for (int i = 0; i < messageParts.length; i+= 2) {
