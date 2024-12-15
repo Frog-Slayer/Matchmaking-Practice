@@ -1,5 +1,8 @@
 package client.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +11,11 @@ public class ClientMessage {
 
     @Override
     public String toString() {
-        return map.toString();
+        try {
+            return new ObjectMapper().writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void put(String key, String value) {

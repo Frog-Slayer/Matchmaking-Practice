@@ -1,18 +1,21 @@
 package utils;
 
-import java.util.HashMap;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.Map;
 
 public class Message {
-    private final Map<String, String> map = new HashMap<>();
+    private Map<String, String> map;
 
-    //TODO : 파싱 실패 예외 처리 필요
     public Message(String message) {
-        String[] messageParts = message.split(" ");
-        for (int i = 0; i < messageParts.length; i+= 2) {
-            String key = messageParts[i];
-            String value = messageParts[i+1];
-            map.put(key, value);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            System.out.println((message));
+            map = mapper.readValue(message, new TypeReference<Map<String, String>>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
